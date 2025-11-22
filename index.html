@@ -1,494 +1,172 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mini-Kahoot Multijugador — SELECT * FROM TEAM</title>
-<style>
-  :root{
-    --bg1:#6a11cb; --bg2:#2575fc;
-    --card:#ffffffee; --accent:#ffd54f; --good:#2ecc71; --bad:#e74c3c;
-    --glass: rgba(255,255,255,0.12);
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; font-family:Inter,Segoe UI,Arial,sans-serif;
-    background: linear-gradient(135deg,var(--bg1),var(--bg2));
-    min-height:100vh; display:flex; align-items:center; justify-content:center;
-    color:#032a4a; padding:18px;
-  }
-
-  .app{
-    width:980px; max-width:96vw; background:linear-gradient(180deg,#ffffff11,#ffffff05);
-    border-radius:14px; padding:18px; box-shadow:0 10px 40px rgba(0,0,0,0.25);
-    backdrop-filter: blur(6px);
-  }
-
-  header{display:flex; justify-content:space-between; align-items:center; gap:12px}
-  h1{margin:0; color:white; font-size:22px}
-  .sub{color:#eaf2ff; font-weight:600; opacity:0.9}
-
-  .stage{display:grid; grid-template-columns:1fr 320px; gap:16px; margin-top:14px}
-  @media (max-width:880px){ .stage{grid-template-columns:1fr; } .side{order:2} }
-
-  .panel{background:var(--card); border-radius:12px; padding:14px; box-shadow: 0 8px 20px rgba(5,20,40,0.06)}
-  .center{display:flex; flex-direction:column; gap:12px}
-
-  /* Setup */
-  .players-list{display:flex;flex-direction:column;gap:8px}
-  .player-item{display:flex;gap:8px;align-items:center}
-  input[type="text"], input[type="number"]{padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);width:100%}
-
-  /* Question */
-  .question-area{display:flex;flex-direction:column;gap:12px}
-  .q-title{font-weight:800;color:#05253b;font-size:20px}
-  .progress{height:10px;background:#e6eef9;border-radius:8px;overflow:hidden}
-  .progress > i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ffd54f,#ff8a65);transform-origin:left;transition:width .2s linear}
-  .opts{display:grid;gap:10px}
-  .opt{background:white;border-radius:10px;padding:12px 14px;cursor:pointer;font-weight:800;display:flex;gap:12px;align-items:center}
-  .opt.disabled{opacity:.6;cursor:default}
-  .opt.correct{background:#e8f8ef}
-  .opt.wrong{background:#fff0f0}
-
-  .controls{display:flex;gap:8px;align-items:center}
-  .btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:800}
-  .btn.primary{background:#2575fc;color:white}
-  .btn.ghost{background:transparent;border:2px solid rgba(5,20,40,0.06)}
-
-  .leaderboard{display:flex;flex-direction:column;gap:8px}
-  .lb-item{display:flex;justify-content:space-between;padding:8px;border-radius:8px;background:#f7fbff;font-weight:800}
-
-  footer{margin-top:12px;text-align:center;color:#eaf2ff;font-weight:700}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Festival Creativo TRAZAA</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Spicy+Rice&display=swap" rel="stylesheet">
+    
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="app" role="application" aria-label="Mini Kahoot Multijugador">
-    <header>
-      <div>
-        <h1>Mini-Kahoot Multijugador</h1>
-        <div class="sub">Responde rápido — gana puntos — firma: <strong>SELECT * FROM TEAM</strong></div>
-      </div>
-      <div class="sub" id="appStatus">Listo</div>
-    </header>
-
-    <div class="stage">
-      <!-- Centro: preguntas / juego -->
-      <main class="panel center" id="mainPanel">
-
-        <!-- Pantalla de Setup (se oculta luego) -->
-        <section id="setupScreen">
-          <h2>Configuración</h2>
-          <label>Cuántos jugadores? (2–8)</label>
-          <input type="number" id="numPlayers" min="1" max="8" value="2" />
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <label style="flex:1">Preguntas por jugador</label>
-            <input type="number" id="qPerPlayer" min="1" max="15" value="6" style="width:90px" />
-          </div>
-
-          <div style="margin-top:12px">
-            <button class="btn primary" id="createPlayersBtn">Crear jugadores</button>
-          </div>
-
-          <div id="playersForm" style="margin-top:12px;display:none">
-            <h3>Introduce nombres</h3>
-            <div class="players-list" id="playersList"></div>
-            <div style="margin-top:10px">
-              <button class="btn primary" id="startAllBtn">Iniciar juego</button>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+        <div class="container">
+            <div class="navbar-img-container position-relative">
+                <a class="navbar-brand" href="index.html">
+                    <img src="img/img1.png" class="navbar-img" alt="Logo TRAZAA">
+                </a>
+                <div class="navbar-flower"></div>
             </div>
-          </div>
-        </section>
-
-        <!-- Pantalla de pregunta (invisible inicialmente) -->
-        <section id="quizScreen" style="display:none">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-weight:700" id="currentPlayerLabel">Jugador</div>
-              <div style="font-size:13px;color:#37526a" id="playerPointsLabel">0 pts</div>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="nav-menu-custom ms-auto d-flex flex-column flex-lg-row align-items-center gap-3">
+                    <a href="pages/convocatoria.html" class="nav-item-custom">Convocatorias</a>
+                    <a href="pages/galeria2.html" class="nav-item-custom">Galería de proyectos</a>
+                    <a href="pages/registro.html" class="nav-item-custom">Registro</a>
+                </div>
             </div>
-            <div style="text-align:right">
-              <div style="font-weight:800">Puntos totales: <span id="totalScore">0</span></div>
-              <div style="font-size:13px;color:#37526a">Pregunta <span id="qIdx">0</span>/<span id="qTot">0</span></div>
-            </div>
-          </div>
-
-          <div class="question-area panel" style="margin-top:10px">
-            <div class="q-title" id="questionText">Pregunta aparece aquí</div>
-            <div class="progress" title="Tiempo">
-              <i id="timeBar" style="width:100%"></i>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div id="timeLeft">15s</div>
-              <div id="lastMsg" style="font-weight:700;color:#37526a"></div>
-            </div>
-
-            <div class="opts" id="optionsContainer"></div>
-
-            <div style="display:flex;justify-content:space-between;margin-top:10px">
-              <button class="btn ghost" id="skipBtn">Saltar pregunta</button>
-              <button class="btn primary" id="endTurnBtn" style="display:none">Terminar turno</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- Pantalla final por jugador / fin total -->
-        <section id="endScreen" style="display:none">
-          <div style="text-align:center">
-            <h2 id="endTitle">Turno terminado</h2>
-            <div id="endBody" style="margin-top:8px"></div>
-            <div style="margin-top:12px">
-              <button class="btn primary" id="nextTurnBtn">Siguiente jugador</button>
-              <button class="btn ghost" id="finishAllBtn">Terminar juego</button>
-            </div>
-          </div>
-        </section>
-
-      </main>
-
-      <!-- Lateral: leaderboard e info -->
-      <aside class="panel side">
-        <div style="margin-bottom:12px">
-          <h3>Jugadores</h3>
-          <div id="playersPanel"></div>
         </div>
-        <div style="margin-top:8px">
-          <h3>Tabla de posiciones</h3>
-          <div class="leaderboard" id="leaderboard"></div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-md-6 position-relative order-2 order-md-1">
+                    <div class="hero-img-container position-relative">
+                        <img src="img/img2.png" class="hero-img" alt="Festival TRAZAA">
+                        <div class="hero-flower"></div>
+                    </div>
+                    <div class="decor-green"></div>
+                </div>
+                <div class="col-md-6 hero-text order-1 order-md-2">
+                    <h1 class="mb-4">Donde las ideas se transforman en innovación.</h1>
+                    <p class="mb-4">
+                        El Festival Creativo TRAZAA, organizado por la Universidad de Diseño e Innovación (UDI),
+                        reúne a estudiantes, docentes, profesionales y empresas para celebrar la creatividad a
+                        través de talleres, conferencias, exposiciones y convocatorias abiertas.
+                    </p>
+                    <a href="pages/registro.html" class="btn btn-custom">Registrarme</a>
+                </div>
+            </div>
         </div>
-      </aside>
-    </div>
+    </section>
 
-    <footer>SELECT * FROM TEAM</footer>
-  </div>
+    <!-- Qué es TRAZAA -->
+    <section class="section-trazaa">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="mb-4">¿Qué es Trazaa-UDI?</h2>
+                    <p class="lead">
+                        TRAZAA es un festival creativo que impulsa el talento de la comunidad estudiantil
+                        y profesional de la UDI. Durante tres días, el campus se convierte en un espacio
+                        de aprendizaje, inspiración e intercambio donde el diseño, la comunicación visual,
+                        el arte y la innovación convergen.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script>
-/* ---------- Banco de preguntas (20) ---------- */
-const QUESTION_POOL = [
-{ q: "¿Qué instrucción SQL obtiene datos de una tabla?", choices:["GET","SELECT","PULL","FETCH"], answerText:"SELECT" },
-{ q: "¿Cuál es la clave que identifica una fila?", choices:["Índice","Clave primaria","Trigger","Vista"], answerText:"Clave primaria" },
-{ q: "¿Qué comando añade filas a una tabla?", choices:["ADD ROW","INSERT INTO","UPDATE ROW","APPEND"], answerText:"INSERT INTO" },
-{ q: "¿Qué cláusula se usa para filtrar registros?", choices:["ORDER BY","GROUP BY","WHERE","HAVING"], answerText:"WHERE" },
-{ q: "¿Cuál función suma valores?", choices:["COUNT()","AVG()","SUM()","TOTAL()"], answerText:"SUM()" },
-{ q: "¿Qué JOIN devuelve solo filas con coincidencias en ambas tablas?", choices:["LEFT JOIN","RIGHT JOIN","INNER JOIN","FULL JOIN"], answerText:"INNER JOIN" },
-{ q: "Normalizar una BD sirve para...", choices:["Aumentar redundancia","Reducir redundancia","Eliminar seguridad","Duplicar tablas"], answerText:"Reducir redundancia" },
-{ q: "¿Qué es una clave foránea (foreign key)?", choices:["Clave única","Referencia a otra tabla","Índice","Backup"], answerText:"Referencia a otra tabla" },
-{ q: "¿Qué comando borra una tabla completa?", choices:["DELETE TABLE","DROP TABLE","REMOVE TABLE","CLEAR TABLE"], answerText:"DROP TABLE" },
-{ q: "¿Qué índice se usa para mejorar búsquedas?", choices:["PRIMARY INDEX","BUSINESS INDEX","INDEX","FOREIGN INDEX"], answerText:"INDEX" },
-{ q: "¿Qué hace DISTINCT en una consulta?", choices:["Ordena resultados","Elimina duplicados","Agrupa datos","Cuenta filas"], answerText:"Elimina duplicados" },
-{ q: "¿Qué es una vista (VIEW)?", choices:["Copia física de tabla","Consulta almacenada virtual","Otro SGBD","Backup"], answerText:"Consulta almacenada virtual" },
-{ q: "¿Qué comando modifica registros existentes?", choices:["INSERT","UPDATE","ALTER","CREATE"], answerText:"UPDATE" },
-{ q: "¿Qué tipo de dato usarías para texto largo?", choices:["INT","VARCHAR","TEXT","DATE"], answerText:"TEXT" },
-{ q: "¿Qué significa ACID en BD?", choices:["Atomicidad, Consistencia, Aislamiento, Durabilidad","Alta, Consistencia, Integridad, Durabilidad","Atomic, Consistent, Immediate, Durable","No sé"], answerText:"Atomicidad, Consistencia, Aislamiento, Durabilidad" },
-{ q: "¿Qué es una transacción?", choices:["Grupo de operaciones que se ejecutan juntas","Copia de seguridad","Índice","Otra BD"], answerText:"Grupo de operaciones que se ejecutan juntas" },
-{ q: "¿Qué comando crea una tabla?", choices:["CREATE TABLE","NEW TABLE","MAKE TABLE","BUILD TABLE"], answerText:"CREATE TABLE" },
-{ q: "¿Qué herramienta usa SQL para agrupar resultados?", choices:["ORDER BY","GROUP BY","LIMIT","OFFSET"], answerText:"GROUP BY" },
-{ q: "¿Qué hace LIMIT en una consulta?", choices:["Limita columnas","Limita filas devueltas","Ordena resultados","Agrupa resultados"], answerText:"Limita filas devueltas" },
-{ q: "¿Qué es un índice compuesto?", choices:["Índice en varias columnas","Índice en una sola columna","Clave primaria","Vista"], answerText:"Índice en varias columnas" }
-];
+    <!-- Actividades -->
+    <section class="section-actividades">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <h2 class="title-orange mb-4">Actividades que Inspiran y Transforman</h2>
+                    <p class="mb-4">
+                        En TRAZAA podrás aprender de forma práctica junto a profesionales, convocatorias
+                        que te invitan a mostrar tu talento y retarte creativamente, y una galería llena
+                        de proyectos inspiradores realizados por estudiantes y artistas. Todo reunido en
+                        un solo festival para motivarte, impulsarte y conectar con lo mejor del mundo creativo.
+                    </p>
+                    <img src="img/img5.png" class="img-fluid rounded actividad-img" alt="Actividad TRAZAA">
+                </div>
+                <div class="col-lg-6">
+                    <div class="position-relative">
+                        <img src="img/img4.png" class="img-fluid rounded grid-img" alt="Grid imagen">
+                        <div class="decor-big-circle">
+                            <div class="dc c1"></div>
+                            <div class="dc c2"></div>
+                            <div class="dc c3"></div>
+                            <div class="dc c4"></div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="title-orange mb-4 mt-5">¿Por qué participar?</h2>
+                    <ul class="lista-custom">
+                        <li>⚡ Aprendé de profesionales reconocidos.</li>
+                        <li>⚡ Conectá con estudiantes y empresas del sector creativo.</li>
+                        <li>⚡ Participá en experiencias prácticas y colaborativas.</li>
+                        <li>⚡ Mostrá tus proyectos y ganá visibilidad.</li>
+                        <li>⚡ Descubrí nuevas oportunidades en el mundo del diseño.</li>
+                    </ul>
+                    <a href="pages/registro.html" class="btn btn-custom mt-3">REGISTRARME</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-/* ---------- Config y estado ---------- */
-let players = []; // {name, score, questions[], currentScore}
-let currentPlayerIndex = 0;
-let currentQuestionIndex = 0;
-let questionsPerPlayer = 6;
-let timePerQuestion = 15; // segundos
-let timer = null;
-let timeLeft = timePerQuestion;
-let answeringDisabled = false;
+    <!-- Footer -->
+    <footer class="footer-custom">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-3 mb-3">
+                        <img src="img/amarillo1.png" class="footer-logo" alt="Logo 1">
+                        <img src="img/imgudi.jfif" class="footer-logo" alt="Logo UDI">
+                    </div>
+                    <div class="footer-contact">
+                        <p class="icon-text">
+                            <img src="img/ubicacion.png" alt="Ubicación" class="icon-small">
+                            Av. Cristo Redentor entre 5to y 6to Anillo, Santa Cruz de la Sierra, Bolivia
+                        </p>
+                        <p class="icon-text">
+                            <img src="img/telefono.png" alt="Teléfono" class="icon-small">
+                            +591 3 333 0000
+                        </p>
+                        <p class="icon-text">
+                            <img src="img/correo.png" alt="Correo" class="icon-small">
+                            contacto@trazzaudi.edu.bo
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="footer-title">Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="pages/convocatoria.html">Convocatorias</a></li>
+                        <li><a href="pages/galeria2.html">Galería de proyectos</a></li>
+                        <li><a href="pages/registro.html">Registro</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <img src="img/facebock.png" class="social-icon" alt="Facebook">
+                        <img src="img/instragram.png" class="social-icon" alt="Instagram">
+                        <img src="img/tiktok.png" class="social-icon" alt="TikTok">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copy">
+            <div class="container text-center">
+                <small>Copyright © 2025 -- Festival Trazzaa UDI</small>
+            </div>
+        </div>
+    </footer>
 
-/* ---------- DOM ---------- */
-const numPlayersInput = document.getElementById('numPlayers');
-const qPerPlayerInput = document.getElementById('qPerPlayer');
-const createPlayersBtn = document.getElementById('createPlayersBtn');
-const playersForm = document.getElementById('playersForm');
-const playersList = document.getElementById('playersList');
-const startAllBtn = document.getElementById('startAllBtn');
-
-const setupScreen = document.getElementById('setupScreen');
-const quizScreen = document.getElementById('quizScreen');
-const endScreen = document.getElementById('endScreen');
-
-const playersPanel = document.getElementById('playersPanel');
-const leaderboardEl = document.getElementById('leaderboard');
-const appStatus = document.getElementById('appStatus');
-
-const currentPlayerLabel = document.getElementById('currentPlayerLabel');
-const playerPointsLabel = document.getElementById('playerPointsLabel');
-const totalScoreEl = document.getElementById('totalScore');
-const qIdx = document.getElementById('qIdx');
-const qTot = document.getElementById('qTot');
-const questionText = document.getElementById('questionText');
-const optionsContainer = document.getElementById('optionsContainer');
-const timeBar = document.getElementById('timeBar');
-const timeLeftLabel = document.getElementById('timeLeft');
-const lastMsg = document.getElementById('lastMsg');
-const skipBtn = document.getElementById('skipBtn');
-const endTurnBtn = document.getElementById('endTurnBtn');
-
-const nextTurnBtn = document.getElementById('nextTurnBtn');
-const finishAllBtn = document.getElementById('finishAllBtn');
-const endTitle = document.getElementById('endTitle');
-const endBody = document.getElementById('endBody');
-
-/* ---------- Helpers ---------- */
-function shuffle(a){ const arr = a.slice(); for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]] } return arr; }
-function sample(array, n){ return shuffle(array).slice(0,n); }
-
-/* ---------- Setup jugadores ---------- */
-createPlayersBtn.addEventListener('click', () => {
-  const n = Math.max(1, Math.min(8, parseInt(numPlayersInput.value) || 1));
-  playersList.innerHTML = '';
-  for(let i=0;i<n;i++){
-    const div = document.createElement('div');
-    div.className = 'player-item';
-    div.innerHTML = `<input type="text" placeholder="Nombre jugador ${i+1}" value="Jugador ${i+1}" data-idx="${i}" />`;
-    playersList.appendChild(div);
-  }
-  playersForm.style.display = 'block';
-});
-
-startAllBtn.addEventListener('click', () => {
-  const inputs = playersList.querySelectorAll('input[type="text"]');
-  players = [];
-  questionsPerPlayer = Math.max(1, Math.min(15, parseInt(qPerPlayerInput.value) || 6));
-  // generar preguntas por jugador (aleatorias y distintas por jugador)
-  const pool = QUESTION_POOL.slice();
-  for(let i=0;i<inputs.length;i++){
-    const name = inputs[i].value.trim() || `Jugador ${i+1}`;
-    // sample preguntas (permitimos repetición entre jugadores pero aleatorias por jugador)
-    const selected = sample(pool, Math.min(questionsPerPlayer, pool.length));
-    // mezclar opciones y mapear answer index
-    const mapped = selected.map(orig => {
-      const choices = shuffle(orig.choices);
-      const answerIndex = choices.indexOf(orig.answerText);
-      return { q: orig.q, choices, answerIndex, answerText: orig.answerText };
-    });
-    players.push({ name, score: 0, questions: mapped, currentScore: 0 });
-  }
-
-  // actualizar panel y pasar al primer jugador
-  renderPlayersPanel();
-  setupScreen.style.display = 'none';
-  quizScreen.style.display = '';
-  currentPlayerIndex = 0;
-  startPlayerTurn();
-});
-
-/* ---------- Render jugadores en lateral ---------- */
-function renderPlayersPanel(){
-  playersPanel.innerHTML = '';
-  players.forEach((p, i) => {
-    const el = document.createElement('div');
-    el.style.display = 'flex'; el.style.justifyContent='space-between'; el.style.padding='8px'; el.style.borderBottom='1px solid rgba(0,0,0,0.05)';
-    el.innerHTML = `<div style="font-weight:800">${i+1}. ${p.name}</div><div style="font-weight:900;color:#05253b">${p.score} pts</div>`;
-    playersPanel.appendChild(el);
-  });
-}
-
-/* ---------- Iniciar turno de jugador ---------- */
-function startPlayerTurn(){
-  const player = players[currentPlayerIndex];
-  currentQuestionIndex = 0;
-  player.currentScore = 0;
-  currentPlayerLabel.textContent = player.name;
-  playerPointsLabel.textContent = player.currentScore + ' pts';
-  totalScoreEl.textContent = player.score;
-  qTot.textContent = player.questions.length;
-  qIdx.textContent = 0;
-  appStatus.textContent = `Turno de ${player.name}`;
-  endScreen.style.display = 'none';
-  quizScreen.style.display = '';
-  renderQuestion();
-}
-
-/* ---------- Render pregunta ---------- */
-function renderQuestion(){
-  answeringDisabled = false;
-  lastMsg.textContent = '';
-  const player = players[currentPlayerIndex];
-  const item = player.questions[currentQuestionIndex];
-  questionText.textContent = item.q;
-  optionsContainer.innerHTML = '';
-  item.choices.forEach((c, idx) => {
-    const d = document.createElement('div');
-    d.className = 'opt';
-    d.dataset.idx = idx;
-    d.innerHTML = `<div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(90deg,#fff,#fff5);display:flex;align-items:center;justify-content:center;font-weight:900;color:#34526a">${String.fromCharCode(65+idx)}</div>
-                   <div style="flex:1">${c}</div>`;
-    d.addEventListener('click', onSelect);
-    optionsContainer.appendChild(d);
-  });
-  qIdx.textContent = currentQuestionIndex + 1;
-  // reset timer
-  resetTimer();
-  startTimer();
-}
-
-/* ---------- Selección de opción ---------- */
-function onSelect(e){
-  if(answeringDisabled) return;
-  answeringDisabled = true;
-  const chosen = parseInt(this.dataset.idx);
-  stopTimer();
-  const player = players[currentPlayerIndex];
-  const item = player.questions[currentQuestionIndex];
-  const correct = item.answerIndex;
-
-  // marcar visualmente
-  const opts = optionsContainer.querySelectorAll('.opt');
-  opts.forEach(o => {
-    o.classList.add('disabled');
-    const idx = parseInt(o.dataset.idx);
-    if(idx === correct) o.classList.add('correct');
-    if(idx === chosen && idx !== correct) o.classList.add('wrong');
-  });
-
-  if(chosen === correct){
-    const timeBonus = Math.max(0, Math.floor(timeLeft * 3));
-    const gained = 100 + timeBonus;
-    player.currentScore += gained;
-    lastMsg.textContent = `¡Correcto! +${gained} pts`;
-    lastMsg.style.color = 'green';
-  } else {
-    lastMsg.textContent = `❌ Incorrecto — respuesta: ${item.choices[correct]}`;
-    lastMsg.style.color = 'crimson';
-  }
-
-  // actualizar marcador parcial
-  playerPointsLabel.textContent = player.currentScore + ' pts';
-
-  // pasar a siguiente pregunta automáticamente
-  setTimeout(() => {
-    nextQuestionOrEndTurn();
-  }, 1000);
-}
-
-/* ---------- Temporizador ---------- */
-function startTimer(){
-  timeLeft = timePerQuestion;
-  updateTimeUI();
-  timer = setInterval(() => {
-    timeLeft -= 0.25;
-    if(timeLeft <= 0){
-      timeLeft = 0;
-      updateTimeUI();
-      stopTimer();
-      onTimeExpired();
-    } else {
-      updateTimeUI();
-    }
-  }, 250);
-}
-function resetTimer(){ timeLeft = timePerQuestion; updateTimeUI(); }
-function stopTimer(){ if(timer){ clearInterval(timer); timer = null; } }
-function updateTimeUI(){
-  const pct = Math.max(0, (timeLeft / timePerQuestion) * 100);
-  timeBar.style.width = pct + '%';
-  timeLeftLabel.textContent = Math.ceil(timeLeft) + 's';
-}
-
-/* ---------- Tiempo expirado ---------- */
-function onTimeExpired(){
-  answeringDisabled = true;
-  const player = players[currentPlayerIndex];
-  const item = player.questions[currentQuestionIndex];
-  const correct = item.answerIndex;
-  const opts = optionsContainer.querySelectorAll('.opt');
-  opts.forEach(o => {
-    o.classList.add('disabled');
-    const idx = parseInt(o.dataset.idx);
-    if(idx === correct) o.classList.add('correct');
-  });
-  lastMsg.textContent = '⏰ Tiempo agotado';
-  lastMsg.style.color = 'crimson';
-  setTimeout(() => nextQuestionOrEndTurn(), 900);
-}
-
-/* ---------- Siguiente pregunta / terminar turno ---------- */
-function nextQuestionOrEndTurn(){
-  const player = players[currentPlayerIndex];
-  currentQuestionIndex++;
-  if(currentQuestionIndex < player.questions.length){
-    renderQuestion();
-  } else {
-    // fin del turno
-    finishPlayerTurn();
-  }
-}
-
-/* ---------- Saltar pregunta ---------- */
-skipBtn.addEventListener('click', () => {
-  if(answeringDisabled) return;
-  stopTimer();
-  lastMsg.textContent = 'Saltaste la pregunta';
-  lastMsg.style.color = '#555';
-  answeringDisabled = true;
-  setTimeout(() => nextQuestionOrEndTurn(), 400);
-});
-
-/* ---------- Finalizar turno: sumar puntaje al total y mostrar pantalla ---------- */
-function finishPlayerTurn(){
-  stopTimer();
-  const player = players[currentPlayerIndex];
-  player.score += player.currentScore;
-  renderPlayersPanel();
-  updateLeaderboard();
-  quizScreen.style.display = 'none';
-  endScreen.style.display = '';
-  endTitle.textContent = `Turno de ${player.name} finalizado`;
-  endBody.innerHTML = `<div style="font-weight:800">${player.name} obtuvo ${player.currentScore} pts en esta ronda.</div>
-                       <div style="margin-top:6px;color:#37526a">Puntos totales: ${player.score} pts</div>`;
-  // si último jugador, cambiar botones
-  if(currentPlayerIndex === players.length - 1){
-    nextTurnBtn.textContent = 'Ver resultados finales';
-  } else {
-    nextTurnBtn.textContent = 'Siguiente jugador';
-  }
-}
-
-/* ---------- Botones final turno ---------- */
-nextTurnBtn.addEventListener('click', () => {
-  currentPlayerIndex++;
-  if(currentPlayerIndex < players.length){
-    startPlayerTurn();
-  } else {
-    // fin total
-    showFinalResults();
-  }
-});
-
-finishAllBtn.addEventListener('click', showFinalResults);
-
-/* ---------- Leaderboard ---------- */
-function updateLeaderboard(){
-  const sorted = players.slice().sort((a,b) => b.score - a.score);
-  leaderboardEl.innerHTML = '';
-  sorted.forEach((p, i) => {
-    const div = document.createElement('div');
-    div.className = 'lb-item';
-    div.innerHTML = `<div>${i+1}. ${p.name}</div><div>${p.score} pts</div>`;
-    leaderboardEl.appendChild(div);
-  });
-}
-
-/* ---------- Resultados finales ---------- */
-function showFinalResults(){
-  endScreen.style.display = '';
-  quizScreen.style.display = 'none';
-  const sorted = players.slice().sort((a,b) => b.score - a.score);
-  endTitle.textContent = 'Resultados finales';
-  let html = `<div style="font-weight:900;font-size:18px">Tabla final</div><div style="margin-top:8px">`;
-  sorted.forEach((p,i) => {
-    html += `<div style="padding:6px 0;font-weight:800">${i+1}. ${p.name} — ${p.score} pts</div>`;
-  });
-  html += `</div><div style="margin-top:12px">¡Gracias por jugar!</div>`;
-  endBody.innerHTML = html;
-  updateLeaderboard();
-  appStatus.textContent = 'Juego finalizado';
-}
-
-/* ---------- Inicial ---------- */
-updateLeaderboard();
-appStatus.textContent = 'Configura los jugadores y pulsa Iniciar';
-</script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
