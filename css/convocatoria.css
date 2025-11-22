@@ -1,0 +1,501 @@
+:root {
+    --primary-color: #ef533f;
+    --secondary-color: #ffb39a;
+    --accent-color: #ffd0c1;
+    --background-light: #f9f9f9;
+    --text-dark: #333;
+    --orange-dark: #c23428;
+}
+
+/* === ESTILOS COMPARTIDOS HEADER/FOOTER === */
+/* Navbar */
+.navbar-custom {
+    background: #ffffff;
+    border-bottom: 4px solid var(--secondary-color);
+    padding: 10px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.navbar-img-container {
+    position: relative;
+}
+
+.navbar-img {
+    width: 120px;
+    border-radius: 20px;
+    animation: navbarFloat 4s ease-in-out infinite;
+}
+
+.navbar-flower {
+    width: 45px;
+    height: 45px;
+    background: #ffeb3b;
+    border-radius: 40%;
+    position: absolute;
+    top: -2px;
+    left: -20px;
+    animation: spin 7s linear infinite;
+    z-index: 1;
+}
+
+.nav-menu-custom {
+    background: #ffe4d6;
+    padding: 10px 25px;
+    border-radius: 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.nav-item-custom {
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 17px;
+    position: relative;
+    padding: 5px 8px;
+    transition: 0.3s ease;
+    font-family: 'Spicy Rice', serif;
+    white-space: nowrap;
+}
+
+.nav-item-custom::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 10px;
+    transition: 0.3s ease;
+}
+
+.nav-item-custom:hover::after {
+    width: 100%;
+}
+
+.nav-item-custom:hover {
+    color: var(--orange-dark);
+}
+
+.nav-item-custom.active {
+    color: var(--orange-dark);
+}
+
+.nav-item-custom.active::after {
+    width: 100%;
+}
+
+/* Footer */
+.footer-custom {
+    background-color: #e9ee64;
+    padding: 40px 0 0;
+}
+
+.footer-logo {
+    width: 120px;
+    margin-bottom: 15px;
+}
+
+.footer-contact {
+    margin-top: 20px;
+}
+
+.icon-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+    font-family: Arial, sans-serif;
+}
+
+.icon-small {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+
+.footer-title {
+    font-family: 'Times New Roman', serif;
+    border-bottom: 2px solid black;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin: 8px 0;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: #ff4c4c;
+    font-family: Arial, sans-serif;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--orange-dark);
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-icon {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.social-icon:hover {
+    transform: scale(1.1);
+}
+
+.footer-copy {
+    background-color: #e9ee64;
+    padding: 20px 0;
+    margin-top: 30px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Animaciones compartidas */
+@keyframes navbarFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+/* === ESTILOS ESPECÍFICOS CONVOCATORIA === */
+.convocatoria-header {
+    background: #fcdbd3;
+    padding: 120px 0 60px;
+    text-align: center;
+}
+
+.convocatoria-header h1 {
+    color: #ff533a;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.convocatoria-header p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.convocatorias-section {
+    padding: 80px 0;
+    background: #f9f9f9;
+}
+
+.convocatoria-item {
+    margin-bottom: 80px;
+}
+
+.poster-img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    transition: transform 0.3s ease;
+}
+
+.poster-img:hover {
+    transform: scale(1.03);
+}
+
+.card-convocatoria {
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    animation: float 3s infinite ease-in-out;
+    height: 100%;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-convocatoria.yellow {
+    background: #f0f353;
+}
+
+.card-convocatoria.orange {
+    background: #ff8f54;
+}
+
+.card-convocatoria.green {
+    background: #c2f2d0;
+}
+
+.card-convocatoria h2 {
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.convocatoria-info p {
+    margin-bottom: 10px;
+    line-height: 1.4;
+    font-family: Arial, sans-serif;
+}
+
+.convocatoria-info strong {
+    color: var(--text-dark);
+}
+
+/* Adornos de fondo */
+.decor-fixed {
+    position: fixed;
+    z-index: -1;
+    opacity: 0.45;
+    pointer-events: none;
+    border-radius: 50%;
+    animation: pulse 6s infinite ease-in-out;
+}
+
+.circle1 {
+    width: 180px;
+    height: 180px;
+    background: #c75c77;
+    top: 25%;
+    left: 10px;
+}
+
+.circle2 {
+    width: 230px;
+    height: 230px;
+    background: #a0d67e;
+    top: 40%;
+    right: -40px;
+    animation: rotateSoft 14s infinite linear;
+}
+
+.circle3 {
+    width: 140px;
+    height: 140px;
+    background: #dfaa6a;
+    bottom: 10%;
+    left: 30px;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes rotateSoft {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Formulario */
+.form-container-section {
+    padding: 80px 0;
+    background: #E8502D;
+}
+
+.form-container {
+    background: #f7b6a7;
+    padding: 40px;
+    border-radius: 20px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.form-title {
+    font-size: 2rem;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+    font-family: 'Times New Roman', serif;
+}
+
+.project-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.project-form label {
+    font-weight: 600;
+    color: #6a2b23;
+    font-size: 15px;
+    font-family: Arial, sans-serif;
+}
+
+.project-form .form-control {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background: #ffe5df;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+
+.project-form .form-control:focus {
+    box-shadow: 0 0 0 2px #ff6d4e;
+    border: none;
+}
+
+.custom-file-box {
+    background: #ffe5df;
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px dashed #ff6d4e;
+}
+
+.custom-file-box:hover {
+    background: #ffd6cd;
+    transform: translateY(-2px);
+}
+
+.file-label {
+    font-size: 14px;
+    color: #6a2b23;
+    cursor: pointer;
+    display: block;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+.hidden-file {
+    display: none;
+}
+
+.checkbox-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-area .form-check-label {
+    font-size: 13px;
+    color: #6a2b23;
+    font-family: Arial, sans-serif;
+}
+
+.postular-btn {
+    background: #E8502D;
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: Arial, sans-serif;
+    width: 100%;
+}
+
+.postular-btn:hover {
+    background: #ff6d4e;
+    transform: scale(1.02);
+}
+
+.postular-btn:active {
+    transform: scale(0.98);
+}
+
+.form-star {
+    position: absolute;
+    right: 40px;
+    top: 40px;
+    width: 80px;
+    height: 80px;
+    background: #ffd4c8;
+    clip-path: polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%);
+    opacity: 0.4;
+    animation: spin 10s linear infinite;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .convocatoria-header {
+        padding: 100px 0 40px;
+    }
+    
+    .convocatoria-header h1 {
+        font-size: 2rem;
+    }
+    
+    .convocatoria-item {
+        margin-bottom: 50px;
+        text-align: center;
+    }
+    
+    .card-convocatoria {
+        min-height: auto;
+        padding: 25px;
+    }
+    
+    .form-container {
+        padding: 30px 20px;
+    }
+    
+    .form-title {
+        font-size: 1.5rem;
+    }
+    
+    .form-star {
+        display: none;
+    }
+    
+    .decor-fixed {
+        display: none;
+    }
+    
+    /* Responsive header/footer */
+    .nav-menu-custom {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    .footer-custom {
+        text-align: center;
+    }
+    
+    .icon-text {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .convocatoria-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .card-convocatoria h2 {
+        font-size: 1.3rem;
+    }
+    
+    .project-form {
+        gap: 15px;
+    }
+}
